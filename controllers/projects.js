@@ -5,7 +5,7 @@ const Project = require("../models/project");
 const getProjects = async (req, res) => {
   const { project } = req.body;
 
-  const projects = await Project.find({ project });
+  const projects = await Project.find({ project }).sort({createdAt: -1});
   if (!projects) {
     throw Error("Projects not found.");
   }
