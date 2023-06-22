@@ -5,7 +5,7 @@ const Project = require("../models/project");
 const getProjects = async (req, res) => {
   const { project } = req.body;
 
-  const projects = await Project.find({ project }).sort({createdAt: -1});
+  const projects = await Project.find({ project }).sort({ createdAt: -1 });
   if (!projects) {
     throw Error("Projects not found.");
   }
@@ -30,10 +30,37 @@ const getProject = async (req, res) => {
 };
 // post a project===============================
 const postProject = async (req, res) => {
-  const data = req.body;
+  const { title, tech, budget, manager, duration, dev } = req.body;
+
+  let emptyFields = [];
+  if (!title) {
+    emptyFields.push("title");
+  }
+  if (!tech) {
+    emptyFields.push("tech");
+  }
+  if (!budget) {
+    emptyFields.push("budget");
+  }
+  if (!manager) {
+    emptyFields.push("manager");
+  }
+  if (!duration) {
+    emptyFields.push("duration");
+  }
+  if (!dev) {
+    emptyFields.push("dev");
+  }
+
+  if (emptyFields.length > 0) {
+    return res
+      .status(400)
+      .json({ error: "Please fill in all fields.", emptyFields });
+  }
+
   try {
     const project = await Project.create({
-      ...data,
+      ...req.body,
     });
     if (!project) {
       throw Error("Project not found");
@@ -62,15 +89,42 @@ const deleteProject = async (req, res) => {
 
 // update a project
 const updateProject = async (req, res) => {
+  const { id } = req.params;
+
+  const { title, tech, budget, manager, duration, dev } = req.body;
+
+  let emptyFields = [];
+  if (!title) {
+    emptyFields.push("title");
+  }
+  if (!tech) {
+    emptyFields.push("tech");
+  }
+  if (!budget) {
+    emptyFields.push("budget");
+  }
+  if (!manager) {
+    emptyFields.push("manager");
+  }
+  if (!duration) {
+    emptyFields.push("duration");
+  }
+  if (!dev) {
+    emptyFields.push("dev");
+  }
+
+  if (emptyFields.length > 0) {
+    return res
+      .status(400)
+      .json({ error: "Please fill in all fields.", emptyFields });
+  }
   try {
-    const { id } = req.params;
-    const data = req.body;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw Error("Invalid id.");
     }
     const project = await Project.findOneAndUpdate(
       { _id: id },
-      { ...data },
+      { ...req.body },
       { new: true }
     );
     if (!project) {
