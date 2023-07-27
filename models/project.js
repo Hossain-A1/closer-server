@@ -26,7 +26,12 @@ const projectSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
+    user_id:{
+    type:String,
+    require:true
+    }
   },
+ 
   {
     timestamps: true,
   }

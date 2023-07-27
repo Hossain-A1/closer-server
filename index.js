@@ -3,6 +3,7 @@ require("dotenv").config();
 const mongoose = require("mongoose")
 const cors = require("cors");
 const projectsRoutes = require("./routes/projects")
+const userRoutes = require("./routes/user")
 
 // express app
 const app = express();
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "hello express js" });
 });
 app.use("/api/projects",projectsRoutes)
+app.use("/api/user",userRoutes)
 // connect mongoose
 mongoose.connect(uri,{useUnifiedTopology:true}).then(()=>{
   app.listen(port, () => {

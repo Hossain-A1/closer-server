@@ -3,9 +3,9 @@ const Project = require("../models/project");
 
 // get all projects============================
 const getProjects = async (req, res) => {
-  const { project } = req.body;
+  const  user_id = req.user._id;
 
-  const projects = await Project.find({ project }).sort({ createdAt: -1 });
+  const projects = await Project.find({user_id}).sort({ createdAt: -1 });
   if (!projects) {
     throw Error("Projects not found.");
   }
@@ -19,6 +19,9 @@ const getProject = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw Error("Invalid id");
     }
+    if (id !== req.user?._id.toString()) {
+      throw Error("Unauthorized access.");
+    }
     const project = await Project.findById(id);
     if (!project) {
       throw Error("Project not found.");
@@ -30,6 +33,7 @@ const getProject = async (req, res) => {
 };
 // post a project===============================
 const postProject = async (req, res) => {
+  
   const { title, tech, budget, manager, duration, dev } = req.body;
 
   let emptyFields = [];
@@ -59,14 +63,16 @@ const postProject = async (req, res) => {
   }
 
   try {
+    const user_id= req.user._id;
     const project = await Project.create({
       ...req.body,
+      user_id
     });
     if (!project) {
       throw Error("Project not found");
     }
     res.status(200).json(project);
-  } catch (er) {
+  } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
@@ -77,6 +83,7 @@ const deleteProject = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw Error("Invalid id");
     }
+
     const project = await Project.findOneAndDelete({ _id: id });
     if (!project) {
       throw Error("Project not found.");
@@ -122,6 +129,7 @@ const updateProject = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw Error("Invalid id.");
     }
+
     const project = await Project.findOneAndUpdate(
       { _id: id },
       { ...req.body },
