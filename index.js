@@ -26,7 +26,7 @@ app.use("/api/projects", projectsRoutes);
 app.use("/api/user", userRoutes);
 // connect mongoose
 mongoose
-  .connect(String(uri))
+  .connect(uri)
   .then(() => {
     app.listen(port, () => {
       console.log(`app listing and connected mongoDB on port ${port}`);
